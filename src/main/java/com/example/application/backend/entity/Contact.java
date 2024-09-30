@@ -2,7 +2,9 @@ package com.example.application.backend.entity;
 
 	import java.util.List;
 
-	import jakarta.persistence.Entity;
+import com.vaadin.flow.component.html.Span;
+
+import jakarta.persistence.Entity;
 	import jakarta.persistence.EnumType;
 	import jakarta.persistence.Enumerated;
 	import jakarta.persistence.JoinColumn;
@@ -13,16 +15,59 @@ package com.example.application.backend.entity;
 
 	@Entity
 	public class Contact extends AbstractEntity implements Cloneable {
+		
+		public enum Status{
+			ImportedLead, NotContacted, Contacted, Customer,ClosedLost
+			
+		}
 
-	 
+	    @NotEmpty
 	    private String firstName = "";
 
-	  
+	    @NotEmpty
 	    private String lastName = "";
-	  
+	    
+	    @Email
+	    @NotEmpty
 	    private String email = "";
 	    
+	    @NotEmpty
 	    private String phone; 
+	    
+	    @Enumerated(EnumType.STRING)
+	    private Contact.Status status;
+	    
+	    public String getStatts() {
+			return statts;
+		}
+
+		public void setStatts(String statts) {
+			this.statts = statts;
+		}
+
+		private String statts;
+		
+		private String fault;
+		
+		private Span status1;
+
+
+
+		public Span getStatus1() {
+			return status1;
+		}
+
+		public void setStatus1(Span status1) {
+			this.status1 = status1;
+		}
+
+		public String getFault() {
+			return fault;
+		}
+
+		public void setFault(String fault) {
+			this.fault = fault;
+		}
 
 		public String getPhone() {
 			return phone;
@@ -61,6 +106,14 @@ package com.example.application.backend.entity;
 	    public String toString() {
 	        return firstName + " " + lastName;
 	    }
+
+		public Contact.Status getStatus() {
+			return status;
+		}
+
+		public void setStatus(Contact.Status status) {
+			this.status = status;
+		}
 	}
 
 

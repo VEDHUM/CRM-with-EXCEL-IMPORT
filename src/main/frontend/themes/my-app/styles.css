@@ -3,10 +3,10 @@
 
 .update-button{
 	 /* Primary color */
-	 background-color: #e4e4e4; 
-    color: blue;
-    
+
+    border: 1px solid  #0000ff;
     border-radius: 30px;
+    border-color: #6271fb;
     padding: 10px 10px;
     font-size: 14px;
     cursor: pointer;
@@ -14,38 +14,48 @@
 }
 
 .update-button:hover{
-	background-color: blue;
-	color : #e4e4e4;
 	cursor: pointer;
+	color: white;
+	background-color:  #6271fb;
+	box-shadow:  0px 6px 8px rgba(0,0,0,0.3); 
+	 transition: box-shadow 0.3s ease;
 }
 .update-button:disabled {
-    background-color: #80ffff; /* Disabled state color */
-    border: blue ;
+
     cursor: not-allowed;
 }
 
 
 .delete-button{
-	background-color: #ff8a8a;
-	cursor: pointer;
+	
+    border: 1px solid  #0000ff;
 	border-radius: 30px;
+	border-color: #6271fb;
 	transition: background-color 0.5s ease;
-	color: white;
+
 }
 
-
-
 .delete-button:hover{
-	background-color: #ff0d0d;
+	cursor: pointer;
+	color: white;
+	background-color:  #6271fb;
+	box-shadow:  0px 6px 8px rgba(0,0,0,0.3);  
+	transition: box-shadow 0.3s ease;
 }
 
 .add-button{
+	border: 1px solid  #0000ff;
+	border-radius: 50px;
 	cursor: pointer;
 	border-radius: 30px;
+	border-color: #6271fb;
 }
 .add-button:hover{
-	background-color: #ffe1ff;
 	cursor: pointer;
+	color: white;
+	background-color:  #6271fb;
+	box-shadow:  0px 6px 8px rgba(0,0,0,0.3);  
+	transition: box-shadow 0.3s ease;
 }
 
 .save-button:hover{
@@ -63,32 +73,166 @@
 }
 
 .excel-button{
-	color: #3fba1b;
+	border: 1px solid  #0000ff;
+	border-radius: 50px;
+	cursor: pointer;
+	border-radius: 30px;
+	border-color: #6271fb;
+}
+
+.excel-button:hover{
+	background-color: #ffe1ff;
+	cursor: pointer;
+	cursor: pointer;
+	color: white;
+	background-color:  #6271fb;
+	box-shadow:  0px 6px 8px rgba(0,0,0,0.3);  
+	transition: box-shadow 0.3s ease;
+}
+
+
+.contact-grid {
+    background-color: #f9f9f9; /* Background color of the grid */
+    border: 4px solid #ddd; /* Border around the grid */
+}
+
+/* Header style */
+.contact-grid::part(header-cell) {
+    background-color: #6271fb ; /* Header background color */
+    color: white; /* Header text color */
+    font-weight: bold; /* Bold header text */
+}
+
+/* Row hover effect */
+.contact-grid::part(row):hover {
+    background-color: #e0f7fa; /* Background color when a row is hovered */
+}
+
+/* Cell style */
+.contact-grid::part(cell) {
+    padding: 8px; /* Padding inside cells */
+    border-bottom: 1px solid #ddd; /* Border for each cell */
+}
+
+a[highlight]{
+	font-weight: bold;
+	
+}
+.header{
+	padding : 0 var(--lumo-space-m);
+}
+
+.header h1.logo{
+	font-size: 2em;
+	color: #98e2f8;
+	margin: var(--lumo-space-m);
+}
+
+.list-link{
+	color: black;
+	font-size: 20px;
+}
+
+.download-button{
+	border: 1px solid  #0000ff;
+	border-radius: 50px;
+	cursor: pointer;
+	border-radius: 30px;
+	border-color: #6271fb;
+}
+.download-button:hover{
+
+	cursor: pointer;
+	color: white;
+	background-color:  #6271fb;
+	box-shadow:  0px 6px 8px rgba(0,0,0,0.3);  
+	transition: box-shadow 0.3s ease;
+}
+
+.log-out{
+	
 	border: 1px solid  #3fba1b;
 	padding: 10px 15px;
-	background-color: white;
 	border-radius: 50px;
-	border-color: #3fba1b; 
-	position: absolute ;
-	top: 70px;
-	right: 30px;
-	z-index: 1000;
-	transition: 0.5s ease;
+	border-color: #6271fb; 
 }
-.excel-button:hover{
-	color: white;
-	background-color: #3fba1b;
+.log-out:hover{
 	transition: 0.6s ease;
+	box-shadow:  0px 6px 8px rgba(0,0,0,0.3)
 }
 
+.avatar-class{
+	font-weight: bold;
+	font-size: 30px;
+	color: blue;
+	
+}
+.Save-button{
+	padding: 10px 15px;
+	border-radius: 50px;
+	border-color: blue;
+	border: 1px solid;
+}
+.Save-button:hover{
+	cursor: pointer;
+	color: white;
+	background-color:  #6271fb;
+	box-shadow:  0px 6px 8px rgba(0,0,0,0.3);  
+	transition: box-shadow 0.3s ease;
+}
+.Cancel-Button{
+	padding: 10px 15px;
+	border-radius: 50px;
+	border-color: blue;
+	border: 1px solid;
+}
+.Cancel-Button:hover{
+	cursor: pointer;
+	color: white;
+	background-color:  #6271fb;
+	box-shadow:  0px 6px 8px rgba(0,0,0,0.3);  
+	transition: box-shadow 0.3s ease;
+}
+	
+.Process-Button{
+	padding: 10px 15px;
+	border-radius: 50px;
+	border-color: blue;
+	border: 1px solid;
+}
+.Process-Button:hover{
+	cursor: pointer;
+	color: white;
+	background-color:  #6271fb;
+	box-shadow:  0px 6px 8px rgba(0,0,0,0.3);  
+	transition: box-shadow 0.3s ease;
+}
+.Refresh-button{
+	padding: 10px 15px;
+	border-radius: 50px;
+	border-color: blue;
+	border: 1px solid;
+}
+.Refresh-button:hover{
+	cursor: pointer;
+	color: white;
+	background-color:  #6271fb;
+	box-shadow:  0px 6px 8px rgba(0,0,0,0.3);  
+	transition: box-shadow 0.3s ease;
+}
 
+.list-button{
+	padding: 10px 80px;	
+	border-radius: 50px;
+}
+.user-button{
+	padding: 10px 90px;	
+	border-radius: 50px;
+}
 
-
-
-
-
-
-
-
-
+.logo{
+	font-size: 2em;
+	color: #98e2f8;
+	margin: var(--lumo-space-m);
+}
 
