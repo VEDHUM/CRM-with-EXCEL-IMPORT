@@ -51,7 +51,18 @@ public class ContactController {
 		return body;
 	}
 	
-	
+	@RequestMapping("/pdf")
+	public ResponseEntity<Resource> downloadpdf() throws IOException{
+		
+		String filename = "contact.pdf";
+		
+		ByteArrayInputStream actualData = service.getActualData();
+		InputStreamResource file = new InputStreamResource(actualData);
+		
+		ResponseEntity<Resource> body = ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename ="+filename).contentType(MediaType.parseMediaType("application/vnd.ms-excel")).body(file);
+		
+		return body;
+	}
 	
 	
 	

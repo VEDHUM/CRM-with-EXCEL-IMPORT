@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +25,8 @@ import com.example.application.backend.service.AuditTrailService;
 import com.example.application.backend.service.ContactService;
 import com.example.application.controller.ContactController;
 import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.avatar.Avatar;
+import com.vaadin.flow.component.avatar.AvatarVariant;
 //import com.example.application.ui.excel.UploadView;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -34,6 +35,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -45,6 +47,7 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.Validator;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.validator.RegexpValidator;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
@@ -117,24 +120,45 @@ public class ListView extends VerticalLayout {
         grid.getStyle().set("position", "relative");
         grid.setSizeFull();
      
-
-        grid.setColumns( "firstName","lastName", "email","phone","status");
+        grid.addColumn(createAvatarAndNameRenderer()).setHeader("Name").setAutoWidth(true);     
+        grid.addColumn(Contact::getPhone).setHeader("Phone no.").setAutoWidth(true);  
+        grid.addColumn(Contact::getStatus).setHeader("Status").setAutoWidth(true);  
+  
         
-
-
-        grid.getColumns().forEach(col -> col.setAutoWidth(true));    
-       // grid.setSelectionMode(Grid.SelectionMode.SINGLE);
+        
         grid.setSelectionMode(Grid.SelectionMode.MULTI);
-        
-
-        //FUNCTION FOR SINGLE SELECT AND GET VALUE
-      //  grid.asSingleSelect().addValueChangeListener(evt -> editContact(evt.getValue()));
-        
+                
         grid.asMultiSelect().addValueChangeListener(evnt -> editContact(evnt.getValue()));
         
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES, GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_COMPACT);
 
     }
+	
+
+	private ComponentRenderer<HorizontalLayout, Contact> createAvatarAndNameRenderer() {
+	    return new ComponentRenderer<>(item -> {
+	       
+	        Avatar avatar = new Avatar();
+	        avatar.setName(item.getFirstName()); 
+	        avatar.setImage(item.getFirstName().toUpperCase().substring(0)); 
+	        avatar.addThemeVariants(AvatarVariant.LUMO_LARGE);
+	        
+	        String firstname = item.getFirstName();
+	        String lastname = item.getLastName();
+
+	       
+	        H3 nameLabel = new H3(firstname.toUpperCase() + " " + lastname.toUpperCase());
+	        Div emailLabel = new Div(item.getEmail());
+
+	        VerticalLayout layout1 = new VerticalLayout(nameLabel,emailLabel);
+	        
+	        HorizontalLayout layout = new HorizontalLayout(avatar, layout1);
+	        layout.setAlignItems(Alignment.CENTER); 
+	      
+
+	        return layout;
+	    });
+	}
 	
 
 

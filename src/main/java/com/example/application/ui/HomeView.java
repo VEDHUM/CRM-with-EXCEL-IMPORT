@@ -21,12 +21,14 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import jakarta.annotation.security.RolesAllowed;
 
 
 @Route(value = "HomeView")
+@PageTitle("Home | CRM")
 @RolesAllowed("ADMIN")
 
 public class HomeView extends VerticalLayout {
