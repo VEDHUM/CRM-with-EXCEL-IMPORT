@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +22,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.example.application.Layouts.MainLayout;
 import com.example.application.backend.entity.AuditTrail;
 import com.example.application.backend.entity.Contact;
-import com.example.application.backend.entity.Users;
 import com.example.application.backend.service.AuditTrailService;
 import com.example.application.backend.service.ContactService;
 import com.example.application.controller.ContactController;
@@ -60,7 +60,7 @@ import jakarta.annotation.security.RolesAllowed;
 public class ListView extends VerticalLayout {
 	
 
-    private Grid<Contact> grid = new Grid<>(Contact.class);
+    private Grid<Contact> grid = new Grid<>(Contact.class,false);
     List<Contact> list;
     Grid<List<Contact>> rid = new Grid<>();
     TextField filtertext = new TextField();
@@ -76,6 +76,7 @@ public class ListView extends VerticalLayout {
     Button deletebutton = new Button();
     Button addbutton;
     Button excelbutton;
+    Button processbutton;
     Contact contact;
     Button exportbutton;
 
@@ -115,8 +116,12 @@ public class ListView extends VerticalLayout {
         grid.addClassName("contact-grid");
         grid.getStyle().set("position", "relative");
         grid.setSizeFull();
-      //  grid.addColumn(Contact::getStatus1).setHeader("Status");
-        grid.setColumns("id","firstName", "lastName", "email","phone","status","status1");
+     
+
+        grid.setColumns( "firstName","lastName", "email","phone","status");
+        
+
+
         grid.getColumns().forEach(col -> col.setAutoWidth(true));    
        // grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.setSelectionMode(Grid.SelectionMode.MULTI);
@@ -172,6 +177,7 @@ public class ListView extends VerticalLayout {
 			
 			audit.setAction("UPDATE");
 			openUpdateDialog(null);
+			
 		});
 		updatebutton.addClassName("update-button");
 		
@@ -237,15 +243,22 @@ public class ListView extends VerticalLayout {
 	
 
 	// ADD BUTTON FUNCTION
- 	  public void Addbuton() {
-		   
-		  
+  public void Addbuton() {
+	  
 		   Dialog dialog = new Dialog();
 	       dialog.setHeaderTitle("Add Contact");
 	       dialog.addClassName("add-dialog");
+	       
            Contact contact = new Contact();
+	      
            
-     
+           Grid<Contact> grid = new Grid<>(Contact.class);
+           List<Contact> entries = new ArrayList<>();
+           
+          
+           
+           grid.setColumns("firstName","lastName","email","phone","status");
+           
            phone.setMaxLength(10);
            
            firstName.setClearButtonVisible(true);
@@ -268,14 +281,14 @@ public class ListView extends VerticalLayout {
            
            binder.forField(email)
            .asRequired("Email is required")
-           .withValidator(Validator.from(email -> email.contains("@"), "Email must contain '@'"))
-           .withValidator(Validator.from(email -> email.contains(".com"), "Email must contain '.com'"))
+           .withValidator(Validator.from(emaill -> emaill.contains("@"), "Email must contain '@'"))
+           .withValidator(Validator.from(emaill -> emaill.contains(".com"), "Email must contain '.com'"))
            .bind(Contact::getEmail, Contact::setEmail);
            
            binder.forField(phone)
            .asRequired("Phone is required")
            .withValidator(new RegexpValidator("Phone should contain numbers ", "\\d*"))
-           .withValidator(phone -> phone.length() == 10, "Phone number must be exactly 10 digits")
+           .withValidator(phonee -> phonee.length() == 10, "Phone number must be exactly 10 digits")
            .bind(Contact::getPhone, Contact::setPhone);
            
            binder.forField(status)
@@ -284,21 +297,27 @@ public class ListView extends VerticalLayout {
            
 
  		   status.setItems(Contact.Status.values());
+ 		   
+		   
 	       binder.setBean(contact);
 	       
-
-	       
-		   FormLayout tool = new FormLayout();
-		   tool.add(firstName,lastName, email, phone, status);
-		   
-		   Button saveButton = new Button(("Save"), new Icon(VaadinIcon.CHECK));
-		   saveButton.addClassName("Save-button");
-		  
-		   
-		   
-		   saveButton.addClickListener(event -> { 		  
-			  String emailfeild = email.getValue();
-			  String phonefeild = phone.getValue();
+	       Button addTogird = new Button("Add To Grid");
+	       addTogird.addClassName("Save-button");
+		   addTogird.addClickListener(e ->{
+			   
+			   String firstname = firstName.getValue();
+			   String lastname = lastName.getValue();
+			   String emailfeild = email.getValue();
+			   String phonefeild = phone.getValue();
+			   
+			Contact contact1 = new Contact();
+			contact1.setFirstName(firstname);
+			contact1.setLastName(lastname);
+			contact1.setEmail(emailfeild);
+			contact1.setPhone(phonefeild);
+			contact1.setStatus(status.getValue());			   
+			
+			
 			  
 		        boolean emailExists = contactService.checkIfEmailExists(emailfeild);
 		        boolean phoneExists = contactService.checkIfPhoneExists(phonefeild);
@@ -331,14 +350,38 @@ public class ListView extends VerticalLayout {
 		        else if(!binder.isValid()) {
 		        	 Notification.show("Correct all Validations", 3000, Notification.Position.MIDDLE);
 		        }
-		        
+			   
 		        else {
-		        	
-		        	 contactService.save(binder.getBean());
+                   entries.add(contact1);
+			       firstName.clear();
+			       lastName.clear();
+			       email.clear();
+			       phone.clear();
+			       status.clear();
+			       grid.setItems(entries);
+			    }
+		   });
+		     
+		   
+		   FormLayout tool = new FormLayout();
+		   tool.add(firstName,lastName, email, phone, status,addTogird);
+		   
+		   Button saveButton = new Button(("Save"), new Icon(VaadinIcon.CHECK));
+		   saveButton.addClassName("Save-button");
+		  
+
+		   
+		   saveButton.addClickListener(event -> { 		  
+			 
+		        	if(!entries.isEmpty()) {
+		        	   contactService.save(entries);
+		        	  
 					   Notification.show("CONTACT ADDED SUCCESSFULLY ");
 					   updateList();
 					   
-					   String oldValye = buildContactInfoString(binder.getBean());
+					   Contact c1 = entries.iterator().next();
+					   
+					   String oldValye = buildContactInfoString(c1);
 					   
 					    audit.setChangedBy(chechUserRole());
 						audit.setAction("ADD");	
@@ -346,26 +389,31 @@ public class ListView extends VerticalLayout {
 						audit.setChangeDate(LocalDateTime.now());
 						audit.setOldValue(oldValye);
 						auditservice.save(audit);
-					   dialog.close();
-					   
-		        }
+					    dialog.close();
+					}else {
+						 Notification.show("GRID IS EMPTY", 3000, Notification.Position.MIDDLE);
+					}
 	 	   
 	        });
 
 		   
 		
 		   saveButton.addClickShortcut(Key.ENTER);
-		   
+	
 		   Button cancelButton = new Button("Cancel",new Icon(VaadinIcon.CLOSE) , click -> {
 			   dialog.close();
 			   });
 		   cancelButton.addClassName("Cancel-Button");
 		   cancelButton.addClickShortcut(Key.ESCAPE);
 		   
+		  
+		   
 		   HorizontalLayout button = new HorizontalLayout(saveButton,cancelButton);
 	
-		   dialog.add(tool,button);
+		   dialog.add(tool,grid,button);
 		   dialog.open();
+		   dialog.getFooter().add(saveButton,cancelButton);;
+		   dialog.setSizeFull();
 	   }
 	  
 	  
@@ -519,7 +567,7 @@ public class ListView extends VerticalLayout {
 		           String newValue = buildContactInfoString(contact);
 		           String action = checkWhichIsUpdated(oldContact,contact).toString();
 		           
-		           cancel = "SAVED";
+		            cancel = "SAVED";
 		            audit.setChangedBy(chechUserRole());
 					audit.setAction(action);	
 					audit.setEntityId(contact.getId());
@@ -613,12 +661,25 @@ public class ListView extends VerticalLayout {
         
         List<Contact> contactList = new ArrayList<>();
         
-         Button processbutton = new Button("Process Excel File", e -> { 
-         processExcel(buffer.getInputStream(), contactList);
-         rid.setItems(contactList);
-         uploadbutton.setEnabled(true);
+            processbutton = new Button("Process Excel File", e -> { 
+            processExcel(buffer.getInputStream(), contactList);
+            rid.setItems(contactList);
+            uploadbutton.setEnabled(true);
+           
+         });
+         processbutton.setEnabled(false);
+         
+         upload.addFinishedListener(e -> {
+          processbutton.setEnabled(true);
+          
+         });
        
-        });
+         upload.addFileRemovedListener( event ->{
+        	 contactList.clear();
+        	 rid.setItems(contactList);
+        	 processbutton.setEnabled(false);
+        	 uploadbutton.setEnabled(false);
+         });
         
         processbutton.addClassName("Process-Button");
          uploadbutton.addClickListener( e -> {
@@ -627,19 +688,18 @@ public class ListView extends VerticalLayout {
                         .filter(contact -> "PASS".equals(contact.getStatts()))
                         .collect(Collectors.toList());
                 if(!uniqueContacts.isEmpty()) {
+                	
          	       this.contactService.save(uniqueContacts);  
          	       updateList();
-         	       
          	      String valess = uniqueContacts.toString();
          	      audit.setChangedBy(chechUserRole());
   				  audit.setAction("IMPORTED");	
-  				  //audit.setEntityId(uniqueContacts.getId());
   		          audit.setNewValue(valess);
   				  audit.setOldValue("Data IMPORTED");  // Set old value  
   				  audit.setChangeDate(LocalDateTime.now());
   				  auditservice.save(audit);
-         	       Notification.show("PASSED Datas are Saved" , 3000, Notification.Position.MIDDLE);
-         	       dialog.close();
+         	      Notification.show("PASSED Datas are Saved" , 3000, Notification.Position.MIDDLE);
+         	      dialog.close();
             }else {
             	Notification.show("All Datas Failed" , 3000, Notification.Position.MIDDLE);
             	dialog.close();
@@ -670,7 +730,6 @@ public class ListView extends VerticalLayout {
         
         
         rid.setSizeFull();
-//        rid.getColumns().forEach(col -> col.setAutoWidth(true)); 
         
         rid.addColumn(Contact::getFirstName).setHeader("FIRST NAME").setAutoWidth(true);
         rid.addColumn(Contact::getLastName).setHeader("LAST NAME").setAutoWidth(true);
@@ -696,7 +755,11 @@ private void processExcel(InputStream inputStream, List<Contact> list) {
 	
    	//Contact p = new Contact();
        try (Workbook workbook = new XSSFWorkbook(inputStream)) {
-           Sheet sheet = workbook.getSheet("Sheet1"); 
+           Sheet sheet = null;
+           for(int i = 0;  i < workbook.getNumberOfSheets(); i++) {
+        	   Sheet currentSheet = workbook.getSheetAt(i);   
+        	   sheet = currentSheet;
+           
 
           
            	int rowNumber = 0;
@@ -731,26 +794,31 @@ private void processExcel(InputStream inputStream, List<Contact> list) {
                        boolean hasErrors = false;
                        
                        if(isEmailDuplicate) {
-                    	   faultMessage.append("Email already EXISTS. ");
+                    	   faultMessage.append(" Email already EXISTS. ");
                     	   hasErrors = true;
                     	   }
                        if(isPhoneDuplicate) {
-                    	   faultMessage.append("Phone no. already EXISTS.");
+                    	   faultMessage.append(" Phone no. already EXISTS.");
                     	   hasErrors = true;
                        }
                        if(isFirstNameFalse) {
-                    	   faultMessage.append("First Name contains numeric values. ");
+                    	   faultMessage.append(" First Name contains numeric values. ");
                     	    hasErrors = true;
                     	}
                     	if (isLastName) {
-                    	    faultMessage.append("Last Name contains numeric values. ");
+                    	    faultMessage.append(" Last Name contains numeric values. ");
                     	    hasErrors = true;
+                    	}if(phone.length() != 10) {
+                    		 faultMessage.append(" Phone no. Greater or less Than 10 digits.");
+                     	    hasErrors = true;
                     	}
                     	
                     	if(hasErrors) {
                     		contact.setFault(faultMessage.toString().trim());
                     		contact.setStatts("FAIL");
                     		}
+                    			
+                    		
                     	else {
                     		 contact.setFault("All DATA are VALID");
                     		 contact.setStatts("PASS");
@@ -760,8 +828,10 @@ private void processExcel(InputStream inputStream, List<Contact> list) {
                        list.add(contact);
        
                }
+           }
                                  
         Notification.show("Excel file processed successfully!",3000, Notification.Position.MIDDLE);
+        processbutton.setEnabled(false);
 
         
        } catch (Exception e) {
@@ -778,7 +848,7 @@ private void processExcel(InputStream inputStream, List<Contact> list) {
         case STRING:
             return cell.getStringCellValue();
         case NUMERIC:
-                return BigDecimal.valueOf(cell.getNumericCellValue()).toPlainString(); // Convert numeric value to a plain string  
+                return BigDecimal.valueOf(cell.getNumericCellValue()).toPlainString();
         case BOOLEAN:
             return Boolean.toString(cell.getBooleanCellValue());
         case FORMULA:

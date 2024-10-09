@@ -16,7 +16,7 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
             "or lower(c.lastName) like lower(concat('%', :searchTerm, '%'))" +
             "or lower(c.email) like lower(concat('%', :searchTerm, '%'))" +
             "or lower(c.phone) like lower(concat('%', :searchTerm, '%'))" +
-            "or lower(c.status) like lower(concat('%', :searchTerm, '%'))")//
+            "or lower(c.status) like lower(concat('%', :searchTerm, '%'))")
     List<Contact> search(@Param("searchTerm") String searchTerm);
 
 	List<Contact> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(String name, String name2,
